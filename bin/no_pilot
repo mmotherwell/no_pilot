@@ -10,6 +10,6 @@ require "rake"
 load "./Rakefile"
 Rake::Task[:environment].invoke
 
-require "chusaku/cli"
+require "no_pilot/cli"
 
 exit NoPilot::CLI.new.call
