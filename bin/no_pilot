@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+require "rubygems"
+require "bundler"
+
+Bundler.setup
+
+# Use project's environment.
+require "rake"
+load "./Rakefile"
+Rake::Task[:environment].invoke
+
+require "chusaku/cli"
+
+exit NoPilot::CLI.new.call
