@@ -20,6 +20,7 @@ Gem::Specification.new do |spec|
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/mmotherwell/no_pilot"
   spec.metadata["changelog_uri"] = "https://github.com/mmotherwell/no_pilot/CHANGELOG.md"
+  spec.license = "MIT"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -41,8 +42,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 2.2"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rake", "~> 13.0"
-  spec.add_development_dependency "standardrb"
-  spec.add_development_dependency "chusaku"
+  spec.add_development_dependency "standardrb", "~> 1.3"
+  spec.add_development_dependency "chusaku", "~> 1.4"
 
-  spec.add_dependency "railties", ">= 3.0"
+  spec.add_dependency "railties", "~> 3.0"
 end
