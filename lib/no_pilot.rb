@@ -3,6 +3,8 @@
 # frozen_string_literal: true
 
 require_relative "nopilot/version"
+require_relative "nopilot/cli"
+
 require "chusaku"
 require "chusaku/version"
 require "chusaku/parser"
