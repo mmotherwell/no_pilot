@@ -29,10 +29,13 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.bindir = "bin"
+  spec.executables = ["no_pilot"]
+
   spec.add_development_dependency "bundler", "~> 2.2"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rake", "~> 13.0"
-  spec.add_development_dependency "standardrb", "~> 1.3"
+  spec.add_development_dependency "standardrb", "~> 1.0"
   spec.add_development_dependency "chusaku", "~> 1.4"
 
   spec.add_dependency "railties", "> 3.0"
