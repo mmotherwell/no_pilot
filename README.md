@@ -1,39 +1,74 @@
 # NoPilot
 
-TODO: Delete this and the text below, and describe your gem
+[![Gem Version](https://badge.fury.io/rb/chusaku.svg)](https://badge.fury.io/rb/chusaku)
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/no_pilot`. To experiment with that code, run `bin/console` for an interactive prompt.
+Generate Controller tests based on your `routes.rb` file!
+
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+Add this line to your Rails application's Gemfile:
 
-Install the gem and add to the application's Gemfile by executing:
-
-```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+```ruby
+group :development do
+  gem "no_pilot", require: false
+end
 ```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+And then execute:
 
-```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+```sh
+bundle install
 ```
+
 
 ## Usage
 
-TODO: Write usage instructions here
+From the root of your Rails application, run:
+
+```sh
+bundle exec chusaku
+```
+
+Chusaku has some flags available for use as well:
+
+```
+$ bundle exec chusaku --help
+Usage: chusaku [options]
+        --dry-run                       Run without file modifications
+        --exit-with-error-on-annotation Fail if any file was annotated
+    -c, --controllers-pattern=GLOB      Specify alternative controller files glob pattern
+        --verbose                       Print all annotated files
+    -v, --version                       Show Chusaku version number and quit
+    -h, --help                          Show this help message and quit
+```
+
+### Rake usage
+
+If you'd like to use Chusaku as a Rake task, add the following line to your `Rakefile`:
+
+```ruby
+require "chusaku"
+Chusaku.load_tasks
+```
+
+This will then allow you to call:
+
+```sh
+bin/rake chusaku
+```
+
+To pass flags, pass them like you would from the CLI executable:
+
+```sh
+bin/rake chusaku -- --dry-run --exit-with-error-on-annotation
+```
+
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Read the blog post explaining how the gem works at a high level: https://nshki.com/chusaku-a-controller-annotation-gem.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/no_pilot. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/no_pilot/blob/main/CODE_OF_CONDUCT.md).
-
-## Code of Conduct
-
-Everyone interacting in the NoPilot project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/no_pilot/blob/main/CODE_OF_CONDUCT.md).
+To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
