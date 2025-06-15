@@ -1,0 +1,6 @@
+it "<%= verb.upcase %> <%= path %>" do
+  <%= verb.downcase %> <%= path %>_path
+
+  expect(response).to have_http_status(200)
+  expect(response).to have_http_status(200)
+end

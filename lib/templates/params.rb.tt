@@ -1,0 +1,7 @@
+  let(:valid_params) do
+    <%= valid_params %>
+  end
+
+  let(:invalid_params) do
+    <%= invalid_params %>
+  end

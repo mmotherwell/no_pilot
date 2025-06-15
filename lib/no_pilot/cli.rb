@@ -29,12 +29,26 @@ module NoPilot
       OptionParser.new do |opts|
         opts.banner = "Usage: no_pilot [options]"
         opts.set_summary_width(35)
+        add_debug_flag(opts)
         add_dry_run_flag(opts)
         add_error_on_annotation_flag(opts)
         add_controllers_pattern_flag(opts)
         add_verbose_flag(opts)
         add_version_flag(opts)
         add_help_flag(opts)
+      end
+    end
+
+    # Adds `--debug` flag.
+    #
+    # @param opts [OptionParser] OptionParser instance
+    # @return [void]
+    def add_debug_flag(opts)
+      opts.on("--debug", "Shows output messages via the logger") do
+        @options[:debug] = true
+
+        Rails.logger.level = :info
+        Rails.logger = Logger.new(STDOUT)
       end
     end
 

@@ -1,16 +1,17 @@
-#!/usr/bin/env ruby
-
 # frozen_string_literal: true
+require_relative "no_pilot/version"
+require_relative "no_pilot/cli"
 
-require_relative "nopilot/version"
-require_relative "nopilot/cli"
-
+require "rake"
 require "chusaku"
 require "chusaku/version"
 require "chusaku/parser"
 require "chusaku/routes"
 
 module NoPilot
+  DEFAULT_CONTROLLERS_PATTERN = "**/*_controller.rb".freeze
+  DEFAULT_EXCLUSION_PATTERN = "vendor/**/*_controller.rb".freeze
+
   class Error < StandardError; end
 
   class << self
@@ -40,7 +41,11 @@ module NoPilot
         source_path = controller_class.instance_method(action_method_name).source_location&.[](0)
         next unless controllers_paths.include?(source_path)
 
-        annotate_file(path: source_path, actions: actions)
+        generate_request_spec_file(
+          controller_class: controller_class.to_s.split(" ")[0],
+          path: source_path.gsub("app/controllers", "spec/requests").gsub("controller.rb", "spec.rb"),
+          actions: actions
+        )
       end
 
       output_results
@@ -62,6 +67,68 @@ module NoPilot
     # @param path [String] Path to file
     # @param actions [Hash<String, Hash>] List of valid action data for the controller
     # @return [void]
+    def generate_request_spec_file(controller_class:, path:, actions:)
+      return true_with_note("Already exists: #{path}") if File.exist?(path)
+      return true_with_note("Not A Scaffold") unless (model_class_name = model_class(controller_class))
+
+      ap controller_class
+      ap model_class(controller_class)
+      ap path
+      ap actions
+
+      puts render_request_spec(
+        class_name: model_class_name,
+        lets: render_lets(model_class_name, model_class(controller_class))
+      )
+
+      abort
+      return true
+      write_to_file(path: path, parsed_file: parsed_file)
+    end
+
+    def model_class(controller_class)
+      model_class_name = controller_class.gsub("Controller", "").singularize
+      model_class_name.constantize
+    rescue
+      false
+    end
+
+    def render_lets(model_class_name, model_class)
+      valid_params = FactoryBot.build(model_class_name.to_sym).attributes
+      ap valid_params
+      abort
+
+      renderer("params.rb.tt").result(binding)
+    end
+
+    def valid_values_for(model_class)
+      relevant_columns_by_type(model_class).each do |column|
+        [column.name, valid_value(column.type)]
+      end
+    end
+
+    def relevant_columns_by_type(model_class)
+      model_class.columns.reject { |column| %w[id created_at updated_at].include?(column.name) }
+    end
+
+    def render_request_spec(class_name:, lets: "", describes: "")
+      renderer("request_spec.rb.tt").result(binding)
+    end
+
+    def renderer(template_name)
+      template = File.read(template_include_path + template_name)
+      ERB.new(template, trim_mode: '-')
+    end
+
+    def template_include_path
+      File.expand_path(File.dirname(__FILE__)) + "/templates/"
+    end
+
+    # Adds annotations to the given file.
+    #
+    # @param path [String] Path to file
+    # @param actions [Hash<String, Hash>] List of valid action data for the controller
+    # @return [void]
     def annotate_file(path:, actions:)
       parsed_file = Chusaku::Parser.call(path: path, actions: actions.keys)
       parsed_file[:groups].each_cons(2) do |prev, curr|
@@ -74,6 +141,7 @@ module NoPilot
         annotate_group(group: curr, route_data: route_data)
       end
 
+      raise "path: #{path}, parsed_file: #{parsed_file}"
       write_to_file(path: path, parsed_file: parsed_file)
     end
 
@@ -200,6 +268,10 @@ module NoPilot
       return "" unless @flags.include?(:verbose)
 
       @changed_files.map { |file| "Annotated #{file}" }.join("\n") + "\n"
+    end
+
+    def true_with_note(note)
+      Rails.logger.info { note.yellow }
     end
   end
 end

@@ -1,0 +1,7 @@
+require 'rails_helper'
+
+RSpec.describe "<%= class_name %>", type: :request do
+  <%= lets %>
+
+  <%= describes %>
+end
